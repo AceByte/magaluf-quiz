@@ -18,9 +18,6 @@ const scoreText = document.getElementById("scoreText");
 const bestText = document.getElementById("bestText");
 const progressFill = document.getElementById("progressFill");
 
-const loadRawBtn = document.getElementById("loadRawBtn");
-const rawContent = document.getElementById("rawContent");
-
 let activeType = "alle";
 let qIndex = 0;
 let score = 0;
@@ -197,21 +194,6 @@ nextBtn.addEventListener("click", () => {
 });
 
 searchInput.addEventListener("input", renderCards);
-
-loadRawBtn.addEventListener("click", async () => {
-  if (parsedData) {
-    rawContent.textContent = parsedData.fullText;
-    return;
-  }
-
-  try {
-    rawContent.textContent = "Indlæser...";
-    const text = await window.KompendiumApp.fetchKompendium("./kompendium.txt");
-    rawContent.textContent = text;
-  } catch (err) {
-    rawContent.textContent = `Fejl: ${err.message}`;
-  }
-});
 
 (async function init() {
   try {
