@@ -50,6 +50,43 @@ function cardMatches(card, query) {
   return all.includes(query);
 }
 
+function buildAggregateMatches(query) {
+  if (!parsedData || !query) return [];
+
+  const matches = [];
+
+  parsedData.sections.forEach((section) => {
+    const inSection = [section.title, section.introText].join(" ").toLowerCase().includes(query);
+    if (inSection) {
+      matches.push({
+        title: section.title,
+        summary: (section.introText || "").slice(0, 220),
+        link: `section.html?slug=${encodeURIComponent(section.slug)}`
+      });
+    }
+
+    section.blocks.forEach((block) => {
+      const text = [block.title, block.text || ""].join(" ").toLowerCase();
+      if (text.includes(query)) {
+        const summary = (block.text || "").replace(/\s+/g, " ").slice(0, 220);
+        matches.push({
+          title: `${block.title}${block.parent ? ` (${block.parent})` : ""}`,
+          summary: summary,
+          link: `section.html?slug=${encodeURIComponent(section.slug)}#${encodeURIComponent(block.slug)}`
+        });
+      }
+    });
+  });
+
+  const seen = new Set();
+  return matches.filter((m) => {
+    const key = `${m.title}|${m.link}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 function renderChips() {
   const types = ["alle", ...new Set(cards.map((c) => c.type))];
   chipRow.innerHTML = "";
@@ -69,6 +106,33 @@ function renderChips() {
 
 function renderCards() {
   const query = searchInput.value.trim().toLowerCase();
+
+  if (query.length > 0) {
+    const aggregateMatches = buildAggregateMatches(query);
+    cardGrid.innerHTML = "";
+
+    if (!aggregateMatches.length) {
+      cardGrid.innerHTML = "<p>Ingen resultater. Prøv et andet søgeord.</p>";
+      return;
+    }
+
+    const article = document.createElement("article");
+    article.className = "card";
+
+    const listHtml = aggregateMatches
+      .map((m) => `<li><a class=\"card-link\" href=\"${m.link}\">${m.title}</a>${m.summary ? `<br><span class=\"mini\">${m.summary}...</span>` : ""}</li>`)
+      .join("");
+
+    article.innerHTML = `
+      <h3><span>[Søgning]</span> Alt om: ${query}</h3>
+      <p>Samlet visning af alt relevant indhold for søgningen.</p>
+      <ul>${listHtml}</ul>
+    `;
+
+    cardGrid.appendChild(article);
+    return;
+  }
+
   const filtered = cards.filter((card) => {
     const typeOk = activeType === "alle" || card.type === activeType;
     const queryOk = query.length === 0 || cardMatches(card, query);

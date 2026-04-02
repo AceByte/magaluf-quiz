@@ -31,15 +31,16 @@
   }
 
   function isLikelySubHeading(line, prev, next) {
-    if (!line || line.length > 72) return false;
+    if (!line || line.length > 96) return false;
     if (/[:.!?]$/.test(line)) return false;
     if (isUpperHeading(line)) return false;
-    if (!/^[A-Z][A-Za-z0-9\-\/ '&]+$/.test(line)) return false;
+    // Support Danish letters and common heading punctuation like commas/parentheses.
+    if (!/^[\p{Lu}][\p{L}\p{N}\-\/ '&(),.+]+$/u.test(line)) return false;
     const words = line.split(/\s+/).length;
-    if (words > 8) return false;
+    if (words > 12) return false;
 
     // Cocktail category headings often appear without blank separators.
-    if (/Cocktails?/i.test(line) && words <= 4) return true;
+    if (/Cocktails?/i.test(line) && words <= 5) return true;
 
     return (!prev || prev.trim() === "") || (!next || next.trim() === "");
   }
