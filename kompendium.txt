@@ -22,7 +22,7 @@ Jigger
 
 Jiggeren er et vigtigt udstyr til at fremstille en cocktail. Det er en målebære som bliver brugt i baren til at ramme de præcise måleforhold og et vigtigt redskab til at måle de elementer som ikke kan freepours.
 
-De fleste i Danmark bruger 2 og 4 cl. Men mange jiggere der bliver købt i udlandet er 4,5 og 3 cl fordi man mange steder i udlandet bruger ounces (oz) og 1 oz = 3 cl (mere præcist 29,57 ml, men i praksis rundes der til 3 cl)
+De fleste i Danmark bruger 2 og 4 cl. Men mange jiggere der bliver købt i udlandet er 4.5 og 3 cl fordi man mange steder i udlandet bruger ounces (oz) og 1 oz = 3 cl (mere præcist 29.57 ml, men i praksis rundes der til 3 cl)
 
 Cocktailshaker
 
@@ -251,7 +251,7 @@ Vodkaens oprindelse diskuteres stadig livligt mellem Polen og Rusland, hvor begg
 
 Hvordan laves vodka?
 
-Vodka kan laves af næsten alt, der indeholder sukker eller stivelse – f.eks. kartofler, hvede, rug, majs eller druer. Råvaren bliver gæret og derefter destilleret flere gange, typisk til en meget høj alkoholprocent (over 90%). Derefter bliver den fortyndet med vand – ofte kildevand – til en drikkelig styrke, typisk 37,5–40% alkohol. Nogle vodkaer bliver også filtreret gennem kul eller andre materialer for at opnå en ekstra ren og blød smag.
+Vodka kan laves af næsten alt, der indeholder sukker eller stivelse – f.eks. kartofler, hvede, rug, majs eller druer. Råvaren bliver gæret og derefter destilleret flere gange, typisk til en meget høj alkoholprocent (over 90%). Derefter bliver den fortyndet med vand – ofte kildevand – til en drikkelig styrke, typisk 37.5–40% alkohol. Nogle vodkaer bliver også filtreret gennem kul eller andre materialer for at opnå en ekstra ren og blød smag.
 
 Kendte mærker og hvad der adskiller dem
 
@@ -385,7 +385,7 @@ MØRK ROM: Her begynder vi at snakke lagring! Mørk rom har ofte ligget i flere 
 
 SORT ROM: Sort rom er en mere ekstrem udgave af mørk rom – ofte tilsat karamel og melasse for at få en kulsort farve og en kraftig, næsten brændt smag. Den har en intens sødme og bruges i klassikere som Dark ’n’ Stormy, som Gosling’s Black Seal, er kendt for at skabe.
 
-SPICED ROM: Spiced rom er rom tilsat krydderier og smagsstoffer som kanel, vanilje, nelliker og appelsinskal. Det mest kendte eksempel er Captain Morgan Spiced, som er lavet med ét formål: at smage godt sammen med cola. Sjovt nok er mange spiced rom ikke teknisk set “rom”, fordi de ofte er under 37,5 % alkohol eller tilsat for meget smag – men de er ekstremt populære, især blandt unge og nybegyndere i romverdenen.
+SPICED ROM: Spiced rom er rom tilsat krydderier og smagsstoffer som kanel, vanilje, nelliker og appelsinskal. Det mest kendte eksempel er Captain Morgan Spiced, som er lavet med ét formål: at smage godt sammen med cola. Sjovt nok er mange spiced rom ikke teknisk set “rom”, fordi de ofte er under 37.5 % alkohol eller tilsat for meget smag – men de er ekstremt populære, især blandt unge og nybegyndere i romverdenen.
 
 NAVY STRENGTH / OVERPROOF ROM: Historisk set fik britiske sømænd udleveret rom som en del af deres daglige ration. For at sikre kvaliteten, brugte man en “proof test” – hældte man krudt i rommen og kunne det stadig antændes, var den “navy proof”. Det svarer ca. til 57 % alkohol, men kan komme helt op til 80 % som bl.a. ses i Stroh rom. Navy strength eller overproof rom er derfor meget stærkere end almindelig rom – men også elsket i tiki-cocktails som Zombie eller til garniture hvis man skal sætte ild til noget.
 
@@ -667,7 +667,7 @@ Ingredienser: 3 cl vodka, 3 cl Kahlua, 5 cl Espresso mix, 1 cl gomme / chokolade
 Pornstar Martini
 Glas: Martini / Coupé. Is: Ingen. Metode: Shake & Fine Strain.
 Garnish: Et Champagne Shot ved siden af.
-Ingredienser: 4 cl vodka, 2 cl passionspuré / sirup, 2 cl limejuice, 1,5 cl gomme / vaniljesirup.
+Ingredienser: 4 cl vodka, 2 cl passionspuré / sirup, 2 cl limejuice, 1.5 cl gomme / vaniljesirup.
 Moscow Mule
 Glas: Julep Cup / Highball. Is: Cubed / Knust. Metode: Byg.
 Garnish: Mint spring / Limeskive.
@@ -675,7 +675,7 @@ Ingredienser: 4 cl vodka, 1 cl frisk lime, top med Ginger Beer.
 Cosmopolitan
 Glas: Martini. Is: Ingen. Metode: Shake & Fine Strain.
 Garnish: Orange Zest.
-Ingredienser: 4 cl vodka, 2 cl Cointreau, 2 cl tranebær, 1,5 cl frisk lime.
+Ingredienser: 4 cl vodka, 2 cl Cointreau, 2 cl tranebær, 1.5 cl frisk lime.
 White Russian
 Glas: Rocks. Is: Cubed. Metode: Byg & Shake fløden.
 Garnish: Flødebolle, Oreo, chokoladepulver eller som den er.
@@ -718,11 +718,11 @@ Ingredienser: 4 cl gin, 3 cl frisk citron, Crème de Mure (brombærlikør).
 Gin Basil Smash
 Glas: Coupé. Is: Ingen. Metode: Shake & Fine Strain.
 Garnish: Basilikumblad.
-Ingredienser: 4 cl gin, 2 cl frisk citron, 1,5 cl gomme / basilikumsirup, 1,5 cl æggehvide, basilikumsblade.
+Ingredienser: 4 cl gin, 2 cl frisk citron, 1.5 cl gomme / basilikumsirup, 1.5 cl æggehvide, basilikumsblade.
 Tom Collins
 Glas: High Ball. Is: Cubed. Metode: Shake.
 Garnish: Citron Skive.
-Ingredienser: 4 cl gin, 3 cl frisk citron, 2,5 cl gomme, top med danskvand.
+Ingredienser: 4 cl gin, 3 cl frisk citron, 2.5 cl gomme, top med danskvand.
 Gin Hass
 Glas: High Ball. Is: Cubed. Metode: Byg.
 Garnish: Lime Skive.
@@ -730,15 +730,15 @@ Ingredienser: 4 cl gin, 2 cl mangosirup, 2 cl frisk lime, top med lemon sodavand
 Clover Club
 Glas: Coupé. Is: Ingen. Metode: Dobbeltshake & Fine Strain.
 Garnish: Citron Zest / Hindbær.
-Ingredienser: 4 cl gin, 2 cl hindbærsirup (eller 5 friske hindbær), 2 cl frisk citron, 1,5 cl gomme, 1,5 cl æggehvide.
+Ingredienser: 4 cl gin, 2 cl hindbærsirup (eller 5 friske hindbær), 2 cl frisk citron, 1.5 cl gomme, 1.5 cl æggehvide.
 French 75
 Glas: Champagne Flute. Is: Ingen. Metode: Shake & Fine Strain.
 Garnish: Lemon Zest.
-Ingredienser: 5 cl gin, 2,5 cl frisk citron, 2,5 cl gomme, top med champagne.
+Ingredienser: 5 cl gin, 2.5 cl frisk citron, 2.5 cl gomme, top med champagne.
 Ramos Gin Fizz
 Glas: Highball. Is: Ingen. Metode: Shakes i 12 min.
 Garnish: Citron Zest & Lime Zest.
-Ingredienser: 6 cl gin, 3 cl fløde, 1,5 cl lime, 1,5 cl citron, 1,5 cl gomme, 1,5 cl æggehvide, 3 dashes Orange Flower Water, top med danskvand.
+Ingredienser: 6 cl gin, 3 cl fløde, 1.5 cl lime, 1.5 cl citron, 1.5 cl gomme, 1.5 cl æggehvide, 3 dashes Orange Flower Water, top med danskvand.
 Gin & Tonic
 Glas: High Ball. Is: Cubed. Metode: Byg.
 Garnish: Lime / Citron / Agurk / Krydderurter.
@@ -752,7 +752,7 @@ Ingredienser: 4 cl lys rom, 4 limebåde, 2 cl gomme, en håndfuld mynte, top med
 Straight Up Daiquiri
 Glas: Coupé. Is: Ingen. Metode: Shake & Fine Strain.
 Garnish: Lime Skive.
-Ingredienser: 6 cl lys rom, 3 cl frisk lime, 1,5 cl gomme.
+Ingredienser: 6 cl lys rom, 3 cl frisk lime, 1.5 cl gomme.
 Mai Tai
 Glas: Lowball. Is: Knust. Metode: Shake & Float.
 Garnish: Mint Sprig.
@@ -790,7 +790,7 @@ Ingredienser: 6 cl Bourbon, 1 cl gomme, 2 dashes Angostura Bitters.
 Whiskey Sour
 Glas: Lowball. Is: Cubed. Metode: Double Shake.
 Garnish: Appelsin Zest.
-Ingredienser: 5 cl bourbon, 3 cl frisk citron, 1,5 cl gomme, 1,5 cl æggehvide, 2 dashes Angostura Bitters.
+Ingredienser: 5 cl bourbon, 3 cl frisk citron, 1.5 cl gomme, 1.5 cl æggehvide, 2 dashes Angostura Bitters.
 Manhattan
 Glas: Coupé. Is: Ingen. Metode: Stir.
 Garnish: Kirsebær (Normal), Citron Zest (Dry), eller begge (Perfect).
@@ -820,7 +820,7 @@ Andre Cocktails (Cognac, Likør & Blandet)
 Amaretto Sour
 Glas: Lowball. Is: Cubed. Metode: Double Shake.
 Garnish: Appelsin Zest / Kirsebær.
-Ingredienser: 5 cl amaretto, 3 cl frisk citron, 1,5 cl gomme, 1,5 cl æggehvide, 2 dash Angostura Bitter.
+Ingredienser: 5 cl amaretto, 3 cl frisk citron, 1.5 cl gomme, 1.5 cl æggehvide, 2 dash Angostura Bitter.
 Aperol Spritz
 Glas: Vinglas. Is: Cubed. Metode: Build.
 Garnish: Apelsin Skive / Zest / Oliven.
@@ -844,12 +844,4 @@ Ingredienser: 3 cl Green Creme de Menthe, 3 cl White Creme de Cacao, 4 cl mælk 
 Singapore Sling
 Glas: High Ball. Is: Knust. Metode: Shake & Strain.
 Garnish: Ananas Skive.
-Ingredienser: 
-4 cl gin
-1 cl Cherry Heering
-0,5 cl DOM Benedictine
-0,5 cl Cointreau
-1 cl frisk lime
-6 cl ananasjuice
-1 dash Angostura Bitter
-dash af Grenadine.
+Ingredienser: 4 cl gin, 1 cl Cherry Heering, 0.5 cl DOM Benedictine, 0.5 cl Cointreau, 1 cl frisk lime, 6 cl ananasjuice, 1 dash Angostura Bitter, dash af Grenadine.
