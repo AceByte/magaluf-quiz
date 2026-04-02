@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bartender Kompendium + Quiz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Work+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="hero" id="top">
+    <div class="hero-overlay"></div>
+    <nav class="top-nav">
+      <a href="#kategorier">Kategorier</a>
+      <a href="#quiz">Quiz</a>
+      <a href="#raw">Hele kompendiet</a>
+    </nav>
+    <div class="hero-content">
+      <p class="eyebrow">Magaluf Bartender Kompendium</p>
+      <h1>Laer barfaget med overblik,
+        <span>hurtige kategorier og quiz</span>
+      </h1>
+      <p class="lead">
+        Et interaktivt opslagsvaerk baseret pa jeres kompendium med fokus pa udstyr,
+        glastyper, spiritus, flair og klassiske cocktails.
+      </p>
+      <a class="cta" href="#quiz">Start quiz</a>
+    </div>
+  </header>
+
+  <main>
+    <section id="kategorier" class="section">
+      <div class="section-head">
+        <h2>Kategoriseret viden</h2>
+        <p>Filtrer pa emner, alkoholtyper og alle andre kategorier direkte fra kompendiet.</p>
+      </div>
+
+      <p id="categoryMeta" class="meta-line">Indlaeser kategorier...</p>
+
+      <div class="tools-row">
+        <input id="searchInput" type="search" placeholder="Sog i kategorier og noeglepunkter..." />
+        <div class="chip-row" id="chipRow"></div>
+      </div>
+
+      <div class="card-grid" id="cardGrid"></div>
+    </section>
+
+    <section id="quiz" class="section quiz-wrap">
+      <div class="section-head">
+        <h2>Quiz</h2>
+        <p>Test viden fra kompendiet. Fa point, forklaringer og highscore.</p>
+      </div>
+
+      <div class="quiz-shell">
+        <div class="quiz-meta">
+          <span id="progressText">Sporgsmal 0/0</span>
+          <span id="scoreText">Point: 0</span>
+          <span id="bestText">Bedste: 0</span>
+        </div>
+        <div class="progress-bar">
+          <div id="progressFill"></div>
+        </div>
+
+        <div id="quizStart" class="quiz-panel active">
+          <h3>Klar til at ga i gang?</h3>
+          <p>Quizzen bliver opbygget automatisk ud fra kompendium-data.</p>
+          <button id="startBtn" class="btn">Start quiz</button>
+        </div>
+
+        <div id="quizPanel" class="quiz-panel">
+          <h3 id="questionText"></h3>
+          <div id="answerList" class="answer-list"></div>
+          <p id="explanation" class="explanation"></p>
+          <div class="quiz-actions">
+            <button id="nextBtn" class="btn" disabled>Naste</button>
+          </div>
+        </div>
+
+        <div id="resultPanel" class="quiz-panel">
+          <h3>Resultat</h3>
+          <p id="resultText"></p>
+          <button id="restartBtn" class="btn">Proev igen</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="raw" class="section raw-wrap">
+      <div class="section-head">
+        <h2>Hele kompendiet</h2>
+        <p>Se originalteksten direkte fra kompendium.txt.</p>
+      </div>
+      <button class="btn secondary" id="loadRawBtn">Indlaes kompendium</button>
+      <pre id="rawContent" class="raw-content">Klik pa knappen for at indlaese teksten...</pre>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Bartender Kompendium Webapp</p>
+    <a href="#top">Til toppen</a>
+  </footer>
+
+  <script src="app.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

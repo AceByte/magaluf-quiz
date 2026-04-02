@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kompendium Sektion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Work+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="sub-hero" id="top">
+    <div class="sub-hero-inner">
+      <a class="back-link" href="index.html">Tilbage til oversigt</a>
+      <h1 id="sectionTitle">Indlaeser...</h1>
+      <p id="sectionIntro"></p>
+    </div>
+  </header>
+
+  <main class="section-page">
+    <aside class="toc">
+      <h2>Indhold</h2>
+      <ul id="tocList"></ul>
+    </aside>
+    <article class="content" id="sectionContent"></article>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    (async function () {
+      const titleEl = document.getElementById("sectionTitle");
+      const introEl = document.getElementById("sectionIntro");
+      const tocEl = document.getElementById("tocList");
+      const contentEl = document.getElementById("sectionContent");
+
+      function queryParam(name) {
+        return new URLSearchParams(window.location.search).get(name);
+      }
+
+      try {
+        const text = await window.KompendiumApp.fetchKompendium("./kompendium.txt");
+        const parsed = window.KompendiumApp.parseKompendium(text);
+        const slug = queryParam("slug") || "";
+        const section = parsed.sections.find(function (s) { return s.slug === slug; }) || parsed.sections[0];
+
+        document.title = section.title + " | Kompendium";
+        titleEl.textContent = section.title;
+        introEl.textContent = section.introText || "Ingen intro tilgaengelig.";
+
+        tocEl.innerHTML = "";
+        section.blocks.forEach(function (block) {
+          const li = document.createElement("li");
+          li.innerHTML = '<a href="#' + block.slug + '">' + block.title + '</a>';
+          tocEl.appendChild(li);
+        });
+
+        if (!section.blocks.length) {
+          contentEl.innerHTML = "<p>Denne sektion har ingen undersektioner.</p>";
+          return;
+        }
+
+        contentEl.innerHTML = section.blocks.map(function (block) {
+          return '<section class="section-block" id="' + block.slug + '"><h2>' + block.title + '</h2><p>' + (block.text || "Ingen tekst.") + '</p></section>';
+        }).join("\n");
+      } catch (err) {
+        titleEl.textContent = "Fejl";
+        introEl.textContent = err.message;
+      }
+    })();
+  </script>
+</body>
+</html>
