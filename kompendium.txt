@@ -700,6 +700,7 @@ Downtown Abbey
 Glas: Vinglas / Lowball. Is: Knust. Metode: Shake.
 Garnish: Citron Skive.
 Ingredienser: 2 cl vodka, 2 cl frisk citron, 3 cl lakridssirup, 4 cl passionspuré, top med prosecco.
+
 Gin-baserede Cocktails
 Dry Martini
 Glas: Coupé (standard jf.
@@ -742,6 +743,7 @@ Gin & Tonic
 Glas: High Ball. Is: Cubed. Metode: Byg.
 Garnish: Lime / Citron / Agurk / Krydderurter.
 Ingredienser: 4 cl gin, top med tonic.
+
 Rom-baserede Cocktails
 Mojito
 Glas: High Ball. Is: Knust. Metode: Muddle, Build & Churn.
@@ -779,6 +781,7 @@ Caramel Addiction
 Glas: Lowball. Is: Cubed. Metode: Shake.
 Garnish: Citron Skive.
 Ingredienser: 2 cl lys rom, 2 cl Cuba Caramel, 2 cl vaniljesirup, 4 cl mælk.
+
 Whiskey-baserede Cocktails
 Old Fashioned
 Glas: Lowball. Is: Cubed. Metode: Stir (30 sekunder).
@@ -800,6 +803,7 @@ Lynchburg Lemonade
 Glas: High Ball. Is: Cubed. Metode: Shake / Byg.
 Garnish: Citron Skive.
 Ingredienser: 4 cl Jack Daniels, 2 cl Cointreau, 2 cl frisk citron, top med Lemonade / Sprite.
+
 Tequila-baserede Cocktails
 Margarita
 Glas: Coupé. Is: Ingen. Metode: Shake & Fine Strain.
