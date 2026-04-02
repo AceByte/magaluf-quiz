@@ -81,7 +81,7 @@ function renderCards() {
   cardGrid.innerHTML = "";
 
   if (!filtered.length) {
-    cardGrid.innerHTML = "<p>Ingen resultater. Proev et andet filter.</p>";
+    cardGrid.innerHTML = "<p>Ingen resultater. Prøv et andet filter.</p>";
     return;
   }
 
@@ -100,7 +100,7 @@ function renderCards() {
       <p>${card.summary}</p>
       ${card.parent ? `<p class="mini">Fra: ${card.parent}</p>` : ""}
       ${listHtml}
-      <p><a class="card-link" href="${card.link}">Aabn underside</a></p>
+      <p><a class="card-link" href="${card.link}">Åbn underside</a></p>
     `;
 
     cardGrid.appendChild(article);
@@ -205,7 +205,7 @@ loadRawBtn.addEventListener("click", async () => {
   }
 
   try {
-    rawContent.textContent = "Indlaeser...";
+    rawContent.textContent = "Indlæser...";
     const text = await window.KompendiumApp.fetchKompendium("./kompendium.txt");
     rawContent.textContent = text;
   } catch (err) {
@@ -228,11 +228,11 @@ loadRawBtn.addEventListener("click", async () => {
 
     if (!quizQuestions.length) {
       startBtn.disabled = true;
-      startBtn.textContent = "Quiz utilgaengelig";
+      startBtn.textContent = "Quiz utilgængelig";
     }
   } catch (err) {
-    categoryMeta.textContent = `Fejl ved indlaesning: ${err.message}`;
-    cardGrid.innerHTML = "<p>Kunne ikke indlaese kompendiet. Kontroller at du koerer via lokal server.</p>";
+    categoryMeta.textContent = `Fejl ved indlæsning: ${err.message}`;
+    cardGrid.innerHTML = "<p>Kunne ikke indlæse kompendiet. Kontroller at du kører via lokal server.</p>";
     startBtn.disabled = true;
     updateQuizMeta();
   }
