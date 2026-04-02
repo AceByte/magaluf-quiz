@@ -191,6 +191,35 @@
     return rx.test(hay);
   }
 
+  function extractCocktailEntries(blockText) {
+    const normalized = String(blockText || "")
+      .replace(/\n+/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .replace(/([A-Z][A-Za-z0-9 '\/&-]{2,})\s+Glas:/g, "\n##$1\nGlas:");
+
+    const chunks = normalized
+      .split("\n##")
+      .map(function (c) { return c.trim(); })
+      .filter(Boolean);
+
+    return chunks.map(function (chunk) {
+      const firstLineBreak = chunk.indexOf("\n");
+      const name = firstLineBreak >= 0 ? chunk.slice(0, firstLineBreak).trim() : chunk;
+      const body = firstLineBreak >= 0 ? chunk.slice(firstLineBreak + 1).trim() : "";
+      return {
+        name: name,
+        body: body,
+        rawText: name + "\n" + body
+      };
+    });
+  }
+
+  function isCocktailRecipeBlock(block) {
+    const txt = block && block.text ? block.text : "";
+    return /Cocktails?/i.test(block && block.title ? block.title : "") && /Glas:/i.test(txt) && /Ingredienser:/i.test(txt);
+  }
+
   function searchParsedContent(parsed, query) {
     if (!parsed || !parsed.sections) return [];
     const result = [];
@@ -199,9 +228,31 @@
       const sectionText = [section.title, section.introText].join(" ");
       const sectionHit = textMatchesQuery(sectionText, query);
 
-      const blockHits = section.blocks.filter(function (block) {
+      const blockHits = [];
+
+      section.blocks.forEach(function (block) {
+        if (isCocktailRecipeBlock(block)) {
+          const entries = extractCocktailEntries(block.text);
+          const matchedEntries = entries.filter(function (entry) {
+            return textMatchesQuery(entry.name + " " + entry.body, query);
+          });
+
+          if (matchedEntries.length) {
+            blockHits.push({
+              title: block.title,
+              slug: block.slug,
+              parent: block.parent,
+              matchedRecipes: matchedEntries,
+              text: matchedEntries.map(function (e) { return e.rawText; }).join("\n\n")
+            });
+          }
+          return;
+        }
+
         const blockText = [block.title, block.text || ""].join(" ");
-        return textMatchesQuery(blockText, query);
+        if (textMatchesQuery(blockText, query)) {
+          blockHits.push(block);
+        }
       });
 
       if (sectionHit || blockHits.length) {
@@ -231,6 +282,17 @@
       }
 
       section.blocks.forEach(function (block) {
+        if (block.matchedRecipes && block.matchedRecipes.length) {
+          block.matchedRecipes.forEach(function (recipe) {
+            items.push({
+              title: recipe.name + " (" + block.title + ")",
+              summary: firstSentence(recipe.body),
+              link: "section.html?slug=" + encodeURIComponent(section.slug) + "#" + encodeURIComponent(block.slug)
+            });
+          });
+          return;
+        }
+
         items.push({
           title: block.title + (block.parent ? " (" + block.parent + ")" : ""),
           summary: firstSentence(block.text),
