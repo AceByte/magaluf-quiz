@@ -705,7 +705,7 @@ Gin-baserede Cocktails
 Dry Martini
 Glas: Coupé Is: Ingen. Metode: Stir.
 Garnish: 2 oliven på pind eller citrontwist.
-Ingredienser: 6 cl gin (eller vodka), 1 cl Dry Vermouth.
+Ingredienser: 6 cl gin, 1 cl Dry Vermouth.
 Negroni
 Glas: Lowball. Is: Cubed. Metode: Byg & Stir.
 Garnish: Appelsin Zest.
