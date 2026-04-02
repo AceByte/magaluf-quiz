@@ -816,6 +816,7 @@ Ingredienser: 4 cl tequila, 1 cl frisk lime, top med rød grape sodavand.
 Tequila Sunrise
 Glas: High Ball. Is: Cubed. Metode: Byg & Float.
 Ingredienser: 4 cl tequila, top med appelsinjuice, 1 cl Grenadine (float).
+
 Andre Cocktails (Cognac, Likør & Blandet)
 Amaretto Sour
 Glas: Lowball. Is: Cubed. Metode: Double Shake.
