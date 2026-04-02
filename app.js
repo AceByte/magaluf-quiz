@@ -170,6 +170,53 @@
     return options;
   }
 
+  function escapeRegExp(value) {
+    return String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  function textMatchesQuery(text, query) {
+    const q = String(query || "").trim().toLowerCase();
+    if (!q) return false;
+
+    const hay = String(text || "").toLowerCase();
+
+    // Phrase queries use contains matching.
+    if (q.indexOf(" ") >= 0) {
+      return hay.indexOf(q) >= 0;
+    }
+
+    // Single-word queries use whole-word style matching to avoid false positives
+    // like searching "gin" matching "branding".
+    const rx = new RegExp("(^|[^\\p{L}\\p{N}])" + escapeRegExp(q) + "([^\\p{L}\\p{N}]|$)", "u");
+    return rx.test(hay);
+  }
+
+  function searchParsedContent(parsed, query) {
+    if (!parsed || !parsed.sections) return [];
+    const result = [];
+
+    parsed.sections.forEach(function (section) {
+      const sectionText = [section.title, section.introText].join(" ");
+      const sectionHit = textMatchesQuery(sectionText, query);
+
+      const blockHits = section.blocks.filter(function (block) {
+        const blockText = [block.title, block.text || ""].join(" ");
+        return textMatchesQuery(blockText, query);
+      });
+
+      if (sectionHit || blockHits.length) {
+        result.push({
+          title: section.title,
+          slug: section.slug,
+          introText: sectionHit ? section.introText : "",
+          blocks: blockHits
+        });
+      }
+    });
+
+    return result;
+  }
+
   function generateDynamicQuiz(parsed, questionCount) {
     const candidates = [];
     parsed.sections.forEach(function (section) {
@@ -225,6 +272,8 @@
     parseKompendium: parseKompendium,
     fetchKompendium: fetchKompendium,
     buildKnowledgeCards: buildKnowledgeCards,
-    generateDynamicQuiz: generateDynamicQuiz
+    generateDynamicQuiz: generateDynamicQuiz,
+    textMatchesQuery: textMatchesQuery,
+    searchParsedContent: searchParsedContent
   };
 })();

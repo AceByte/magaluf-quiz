@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alt om søgning</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Work+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="sub-hero" id="top">
+    <div class="sub-hero-inner">
+      <a class="back-link" href="index.html">Tilbage til oversigt</a>
+      <h1 id="pageTitle">Alt om søgning</h1>
+      <div id="pageIntro" class="section-intro"></div>
+    </div>
+  </header>
+
+  <main class="section-page">
+    <aside class="toc">
+      <h2>Sektioner</h2>
+      <ul id="tocList"></ul>
+    </aside>
+    <article class="content" id="searchContent"></article>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    (async function () {
+      const titleEl = document.getElementById("pageTitle");
+      const introEl = document.getElementById("pageIntro");
+      const tocEl = document.getElementById("tocList");
+      const contentEl = document.getElementById("searchContent");
+
+      function escapeHtml(value) {
+        return String(value || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/\"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function qp(name) {
+        return new URLSearchParams(window.location.search).get(name) || "";
+      }
+
+      function formatParagraphs(text) {
+        return String(text || "")
+          .split(/\n\s*\n/)
+          .map(function (p) { return p.trim(); })
+          .filter(Boolean)
+          .map(function (p) { return "<p>" + escapeHtml(p).replace(/\n/g, "<br>") + "</p>"; })
+          .join("");
+      }
+
+      const query = qp("q").trim();
+      if (!query) {
+        titleEl.textContent = "Alt om søgning";
+        introEl.innerHTML = "<p>Ingen søgning valgt.</p>";
+        contentEl.innerHTML = "<p>Gå tilbage og søg efter fx vodka eller gin.</p>";
+        return;
+      }
+
+      try {
+        const text = await window.KompendiumApp.fetchKompendium("./kompendium.txt");
+        const parsed = window.KompendiumApp.parseKompendium(text);
+        const result = window.KompendiumApp.searchParsedContent(parsed, query);
+
+        titleEl.textContent = `Alt om: ${query}`;
+        introEl.innerHTML = `<p>Samlet visning af alt relateret indhold for søgningen "${escapeHtml(query)}".</p>`;
+
+        if (!result.length) {
+          contentEl.innerHTML = "<p>Ingen direkte resultater fundet.</p>";
+          return;
+        }
+
+        tocEl.innerHTML = result
+          .map(function (section) {
+            return `<li><a class=\"toc-link\" href=\"#${section.slug}\">${escapeHtml(section.title)}</a></li>`;
+          })
+          .join("");
+
+        contentEl.innerHTML = result
+          .map(function (section) {
+            const blockHtml = section.blocks
+              .map(function (b) {
+                return `<section class=\"section-block\" id=\"${escapeHtml(b.slug)}\"><h3>${escapeHtml(b.title)}</h3>${formatParagraphs(b.text)}</section>`;
+              })
+              .join("");
+
+            const introHtml = section.introText ? formatParagraphs(section.introText) : "";
+            return `<section class=\"section-block\" id=\"${escapeHtml(section.slug)}\"><h2>${escapeHtml(section.title)}</h2>${introHtml}${blockHtml || "<p class=\"mini\">Ingen undersektioner i dette match.</p>"}</section>`;
+          })
+          .join("");
+      } catch (err) {
+        titleEl.textContent = "Fejl";
+        introEl.innerHTML = `<p>${escapeHtml(err.message)}</p>`;
+      }
+    })();
+  </script>
+</body>
+</html>

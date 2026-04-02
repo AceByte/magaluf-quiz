@@ -50,32 +50,12 @@ function cardMatches(card, query) {
   return all.includes(query);
 }
 
-function buildAggregateMatches(query) {
-  if (!parsedData || !query) return [];
+function buildSuggestionMatches(query) {
+  if (!query) return [];
 
-  const matches = [];
-
-  parsedData.sections.forEach((section) => {
-    const inSection = [section.title, section.introText].join(" ").toLowerCase().includes(query);
-    if (inSection) {
-      matches.push({
-        title: section.title,
-        summary: (section.introText || "").slice(0, 220),
-        link: `section.html?slug=${encodeURIComponent(section.slug)}`
-      });
-    }
-
-    section.blocks.forEach((block) => {
-      const text = [block.title, block.text || ""].join(" ").toLowerCase();
-      if (text.includes(query)) {
-        const summary = (block.text || "").replace(/\s+/g, " ").slice(0, 220);
-        matches.push({
-          title: `${block.title}${block.parent ? ` (${block.parent})` : ""}`,
-          summary: summary,
-          link: `section.html?slug=${encodeURIComponent(section.slug)}#${encodeURIComponent(block.slug)}`
-        });
-      }
-    });
+  const matches = cards.filter((card) => {
+    const text = [card.title, card.summary, card.parent || "", (card.bullets || []).join(" ")].join(" ");
+    return window.KompendiumApp.textMatchesQuery(text, query);
   });
 
   const seen = new Set();
@@ -108,28 +88,38 @@ function renderCards() {
   const query = searchInput.value.trim().toLowerCase();
 
   if (query.length > 0) {
-    const aggregateMatches = buildAggregateMatches(query);
+    const suggestionMatches = buildSuggestionMatches(query);
+    const aggregateSections = window.KompendiumApp.searchParsedContent(parsedData, query);
     cardGrid.innerHTML = "";
 
-    if (!aggregateMatches.length) {
+    if (!suggestionMatches.length && !aggregateSections.length) {
       cardGrid.innerHTML = "<p>Ingen resultater. Prøv et andet søgeord.</p>";
       return;
     }
 
-    const article = document.createElement("article");
-    article.className = "card";
-
-    const listHtml = aggregateMatches
+    const suggestionsArticle = document.createElement("article");
+    suggestionsArticle.className = "card";
+    const suggestionListHtml = suggestionMatches
+      .slice(0, 14)
       .map((m) => `<li><a class=\"card-link\" href=\"${m.link}\">${m.title}</a>${m.summary ? `<br><span class=\"mini\">${m.summary}...</span>` : ""}</li>`)
       .join("");
 
-    article.innerHTML = `
-      <h3><span>[Søgning]</span> Alt om: ${query}</h3>
-      <p>Samlet visning af alt relevant indhold for søgningen.</p>
-      <ul>${listHtml}</ul>
+    suggestionsArticle.innerHTML = `
+      <h3><span>[Søgeforslag]</span> Resultater for: ${query}</h3>
+      <p>Direkte forslag fra undersiderne.</p>
+      <ul>${suggestionListHtml || "<li><span class=\"mini\">Ingen direkte forslag.</span></li>"}</ul>
     `;
+    cardGrid.appendChild(suggestionsArticle);
 
-    cardGrid.appendChild(article);
+    const allAboutArticle = document.createElement("article");
+    allAboutArticle.className = "card";
+    allAboutArticle.innerHTML = `
+      <h3><span>[Alt om søgning]</span> Alt om: ${query}</h3>
+      <p>Samlet side med alt relevant indhold for søgningen.</p>
+      <p><a class="card-link" href="search.html?q=${encodeURIComponent(query)}">Åbn "Alt om søgning"</a></p>
+      <p class="mini">Matcher i ${aggregateSections.length} hovedsektion(er).</p>
+    `;
+    cardGrid.appendChild(allAboutArticle);
     return;
   }
 
