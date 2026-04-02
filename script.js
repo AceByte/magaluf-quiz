@@ -51,20 +51,8 @@ function cardMatches(card, query) {
 }
 
 function buildSuggestionMatches(query) {
-  if (!query) return [];
-
-  const matches = cards.filter((card) => {
-    const text = [card.title, card.summary, card.parent || "", (card.bullets || []).join(" ")].join(" ");
-    return window.KompendiumApp.textMatchesQuery(text, query);
-  });
-
-  const seen = new Set();
-  return matches.filter((m) => {
-    const key = `${m.title}|${m.link}`;
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
+  if (!query || !parsedData) return [];
+  return window.KompendiumApp.buildSearchSuggestions(parsedData, query, 14);
 }
 
 function renderChips() {
@@ -100,7 +88,6 @@ function renderCards() {
     const suggestionsArticle = document.createElement("article");
     suggestionsArticle.className = "card";
     const suggestionListHtml = suggestionMatches
-      .slice(0, 14)
       .map((m) => `<li><a class=\"card-link\" href=\"${m.link}\">${m.title}</a>${m.summary ? `<br><span class=\"mini\">${m.summary}...</span>` : ""}</li>`)
       .join("");
 

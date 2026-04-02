@@ -217,6 +217,42 @@
     return result;
   }
 
+  function buildSearchSuggestions(parsed, query, maxItems) {
+    const grouped = searchParsedContent(parsed, query);
+    const items = [];
+
+    grouped.forEach(function (section) {
+      if (section.introText) {
+        items.push({
+          title: section.title,
+          summary: firstSentence(section.introText),
+          link: "section.html?slug=" + encodeURIComponent(section.slug)
+        });
+      }
+
+      section.blocks.forEach(function (block) {
+        items.push({
+          title: block.title + (block.parent ? " (" + block.parent + ")" : ""),
+          summary: firstSentence(block.text),
+          link: "section.html?slug=" + encodeURIComponent(section.slug) + "#" + encodeURIComponent(block.slug)
+        });
+      });
+    });
+
+    const seen = new Set();
+    const deduped = items.filter(function (item) {
+      const key = item.title + "|" + item.link;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+    if (typeof maxItems === "number" && maxItems > 0) {
+      return deduped.slice(0, maxItems);
+    }
+    return deduped;
+  }
+
   function generateDynamicQuiz(parsed, questionCount) {
     const candidates = [];
     parsed.sections.forEach(function (section) {
@@ -274,6 +310,7 @@
     buildKnowledgeCards: buildKnowledgeCards,
     generateDynamicQuiz: generateDynamicQuiz,
     textMatchesQuery: textMatchesQuery,
-    searchParsedContent: searchParsedContent
+    searchParsedContent: searchParsedContent,
+    buildSearchSuggestions: buildSearchSuggestions
   };
 })();
