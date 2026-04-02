@@ -215,9 +215,98 @@
     });
   }
 
+  function parseRecipeFields(body) {
+    const labels = ["Glas", "Is", "Metode", "Garnish", "Ingredienser"];
+    const re = /(Glas|Is|Metode|Garnish|Ingredienser):/g;
+    const matches = [];
+    let match;
+
+    while ((match = re.exec(body || "")) !== null) {
+      matches.push({ label: match[1], start: match.index, marker: match[0] });
+    }
+
+    if (!matches.length) return null;
+
+    const fields = {};
+    for (let i = 0; i < matches.length; i += 1) {
+      const current = matches[i];
+      const end = i < matches.length - 1 ? matches[i + 1].start : (body || "").length;
+      fields[current.label] = (body || "")
+        .slice(current.start + current.marker.length, end)
+        .trim()
+        .replace(/\s+/g, " ");
+    }
+
+    labels.forEach(function (label) {
+      if (!fields[label]) fields[label] = "";
+    });
+
+    return fields;
+  }
+
   function isCocktailRecipeBlock(block) {
     const txt = block && block.text ? block.text : "";
     return /Cocktails?/i.test(block && block.title ? block.title : "") && /Glas:/i.test(txt) && /Ingredienser:/i.test(txt);
+  }
+
+  function collectQuizTags(parts) {
+    const text = parts
+      .map(function (part) { return String(part || ""); })
+      .join(" ")
+      .toLowerCase();
+    const tags = new Set();
+    let alcoholMatch = false;
+
+    if (/cocktail/i.test(text)) tags.add("cocktails");
+    if (/udstyr/i.test(text)) tags.add("udstyr");
+    if (/glas/i.test(text)) tags.add("glas");
+    if (/garnish|garniture/i.test(text)) tags.add("garnish");
+    if (/flair/i.test(text)) tags.add("flair");
+    if (/spiritus/i.test(text)) tags.add("spiritus");
+
+    ALCOHOL_KEYWORDS.forEach(function (keyword) {
+      if (text.indexOf(keyword) >= 0) {
+        tags.add(keyword);
+        alcoholMatch = true;
+      }
+    });
+
+    if (alcoholMatch) tags.add("spiritus");
+
+    if (!tags.size) tags.add("andet");
+    return Array.from(tags);
+  }
+
+  function normalizeQuizSettings(questionCountOrOptions) {
+    if (typeof questionCountOrOptions === "number") {
+      return { count: questionCountOrOptions, topic: "alle", difficulty: "mix" };
+    }
+
+    const options = questionCountOrOptions || {};
+    return {
+      count: Number(options.count || options.questionCount || 12),
+      topic: String(options.topic || options.category || "alle").toLowerCase(),
+      difficulty: String(options.difficulty || "mix").toLowerCase()
+    };
+  }
+
+  function quizDifficultyLevel(name) {
+    if (name === "let") return 1;
+    if (name === "mellem") return 2;
+    if (name === "svær") return 3;
+    return 0;
+  }
+
+  function quizTopicMatches(question, topic) {
+    if (!topic || topic === "alle" || topic === "mix") return true;
+    if (!question || !question.tags) return false;
+    return question.tags.indexOf(topic) >= 0;
+  }
+
+  function quizDifficultyMatches(question, difficulty) {
+    const target = quizDifficultyLevel(difficulty);
+    if (!target) return true;
+    return question && question.difficulty === target;
   }
 
   function searchParsedContent(parsed, query) {
@@ -315,48 +404,166 @@
     return deduped;
   }
 
-  function generateDynamicQuiz(parsed, questionCount) {
-    const candidates = [];
+  function generateDynamicQuiz(parsed, questionCountOrOptions) {
+    const settings = normalizeQuizSettings(questionCountOrOptions);
+    const wanted = Math.max(6, Math.min(settings.count || 12, 20));
+    const cocktailEntries = [];
+    const questionBank = [];
+
     parsed.sections.forEach(function (section) {
-      if (section.introText) {
-        candidates.push({
-          answer: section.title,
-          clue: firstSentence(section.introText),
-          explanation: "Beskrivelsen kommer fra sektionen " + section.title + "."
-        });
-      }
       section.blocks.forEach(function (block) {
-        if (block.text) {
-          candidates.push({
-            answer: block.title,
-            clue: firstSentence(block.text),
-            explanation: "Beskrivelsen matcher undersektionen " + block.title + "."
+        if (!isCocktailRecipeBlock(block)) return;
+
+        extractCocktailEntries(block.text).forEach(function (entry) {
+          const fields = parseRecipeFields(entry.body);
+          if (!fields) return;
+
+          cocktailEntries.push({
+            name: entry.name,
+            title: block.title,
+            section: section.title,
+            fields: fields
           });
-        }
+        });
       });
     });
 
-    const allTitles = Array.from(new Set(candidates.map(function (c) { return c.answer; })));
-    const wanted = Math.min(questionCount, candidates.length);
-    const quiz = [];
-    const used = new Set();
+    const allTitles = Array.from(new Set(parsed.sections.reduce(function (acc, section) {
+      acc.push(section.title);
+      section.blocks.forEach(function (block) { acc.push(block.title); });
+      return acc;
+    }, [])));
+    const allNames = Array.from(new Set(cocktailEntries.map(function (e) { return e.name; })));
+    const allMethods = Array.from(new Set(cocktailEntries.map(function (e) { return e.fields.Metode; }).filter(Boolean)));
+    const allGlasses = Array.from(new Set(cocktailEntries.map(function (e) { return e.fields.Glas; }).filter(Boolean)));
+    const allGarnishes = Array.from(new Set(cocktailEntries.map(function (e) { return e.fields.Garnish; }).filter(Boolean)));
 
-    while (quiz.length < wanted) {
-      const pick = candidates[Math.floor(Math.random() * candidates.length)];
-      const key = pick.answer + "|" + pick.clue;
-      if (used.has(key)) continue;
-      used.add(key);
-
-      const options = sampleOptions(pick.answer, allTitles, 4);
-      quiz.push({
-        q: "Hvilket emne passer bedst til denne beskrivelse? \"" + pick.clue + "\"",
-        options: options,
-        answer: options.indexOf(pick.answer),
-        explanation: pick.explanation
+    function addQuestion(question) {
+      if (!question || !question.q || !question.options || question.options.length < 2) return;
+      const normalizedOptions = Array.from(new Set(question.options)).filter(Boolean);
+      if (normalizedOptions.length < 2) return;
+      const answerIndex = normalizedOptions.indexOf(question.answerValue);
+      if (answerIndex < 0) return;
+      questionBank.push({
+        q: question.q,
+        options: normalizedOptions,
+        answer: answerIndex,
+        explanation: question.explanation,
+        tags: Array.from(new Set(question.tags || [])),
+        difficulty: question.difficulty || 1
       });
     }
 
-    return quiz;
+    cocktailEntries.forEach(function (entry) {
+      const tags = collectQuizTags([entry.name, entry.title, entry.section, entry.fields.Glas, entry.fields.Metode, entry.fields.Garnish, entry.fields.Ingredienser]);
+      if (tags.indexOf("cocktails") < 0) tags.push("cocktails");
+
+      if (entry.fields.Metode) {
+        addQuestion({
+          q: "Hvilken metode bruges til " + entry.name + "?",
+          options: sampleOptions(entry.fields.Metode, allMethods, 4),
+          answerValue: entry.fields.Metode,
+          explanation: entry.name + " står i kompendiet med metoden: " + entry.fields.Metode + ".",
+          tags: tags.slice(),
+          difficulty: 1
+        });
+      }
+
+      if (entry.fields.Glas) {
+        addQuestion({
+          q: "Hvilket glas bruges typisk til " + entry.name + "?",
+          options: sampleOptions(entry.fields.Glas, allGlasses, 4),
+          answerValue: entry.fields.Glas,
+          explanation: entry.name + " står med glas: " + entry.fields.Glas + ".",
+          tags: tags.slice(),
+          difficulty: 1
+        });
+      }
+
+      if (entry.fields.Ingredienser) {
+        const ingredients = entry.fields.Ingredienser
+          .split(/,\s*/)
+          .map(function (i) { return i.trim(); })
+          .filter(Boolean);
+
+        const clue = ingredients.slice(0, 3).join(", ");
+        if (clue) {
+          addQuestion({
+            q: "Hvilken cocktail passer bedst til disse ingredienser: " + clue + "?",
+            options: sampleOptions(entry.name, allNames, 4),
+            answerValue: entry.name,
+            explanation: "Ingredienslisten matcher " + entry.name + ".",
+            tags: tags.slice(),
+            difficulty: ingredients.length > 4 ? 3 : 2
+          });
+        }
+      }
+
+      if (entry.fields.Garnish) {
+        addQuestion({
+          q: "Hvilken garnish passer til " + entry.name + "?",
+          options: sampleOptions(entry.fields.Garnish, allGarnishes, 4),
+          answerValue: entry.fields.Garnish,
+          explanation: entry.name + " står med garnish: " + entry.fields.Garnish + ".",
+          tags: tags.slice(),
+          difficulty: 2
+        });
+      }
+    });
+
+    parsed.sections.forEach(function (section) {
+      if (section.introText) {
+        const sectionTags = collectQuizTags([section.title, section.introText]);
+        sectionTags.push(tagForItem(section.title, section.title));
+
+        addQuestion({
+          q: "Hvilket emne passer bedst til denne beskrivelse? \"" + firstSentence(section.introText) + "\"",
+          options: sampleOptions(section.title, allTitles, 4),
+          answerValue: section.title,
+          explanation: "Beskrivelsen kommer fra sektionen " + section.title + ".",
+          tags: sectionTags,
+          difficulty: 1
+        });
+      }
+
+      section.blocks.forEach(function (block) {
+        if (isCocktailRecipeBlock(block)) return;
+        const blockTags = collectQuizTags([block.title, section.title, block.text]);
+        blockTags.push(tagForItem(block.title, section.title));
+
+        addQuestion({
+          q: "Hvilken undersektion passer bedst til denne beskrivelse? \"" + firstSentence(block.text) + "\"",
+          options: sampleOptions(block.title, allTitles, 4),
+          answerValue: block.title,
+          explanation: "Det er en undersektion under " + section.title + ".",
+          tags: blockTags,
+          difficulty: block.text.length > 220 ? 2 : 1
+        });
+      });
+    });
+
+    const exactPool = questionBank.filter(function (question) {
+      return quizTopicMatches(question, settings.topic) && quizDifficultyMatches(question, settings.difficulty);
+    });
+    const topicPool = questionBank.filter(function (question) {
+      return quizTopicMatches(question, settings.topic);
+    });
+    const difficultyPool = questionBank.filter(function (question) {
+      return quizDifficultyMatches(question, settings.difficulty);
+    });
+
+    const pool = exactPool.length >= wanted ? exactPool : topicPool.length >= wanted ? topicPool : difficultyPool.length >= wanted ? difficultyPool : questionBank;
+    const questions = pool.slice();
+
+    // Shuffle and trim to requested size.
+    for (let i = questions.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const tmp = questions[i];
+      questions[i] = questions[j];
+      questions[j] = tmp;
+    }
+
+    return questions.slice(0, wanted);
   }
 
   async function fetchKompendium(path) {

@@ -64,7 +64,40 @@
 
         <div id="quizStart" class="quiz-panel active">
           <h3>Klar til at gå i gang?</h3>
-          <p>Quizzen bliver opbygget automatisk ud fra kompendium-data.</p>
+          <p>Quizzen bygger primært på konkrete cocktails (glas, metode og ingredienser).</p>
+          <div class="quiz-controls">
+            <label class="quiz-control">
+              <span>Kategori</span>
+              <select id="quizCategory">
+                <option value="alle">Alle</option>
+                <option value="cocktails">Cocktails</option>
+                <option value="spiritus">Spiritus</option>
+                <option value="udstyr">Udstyr</option>
+                <option value="glas">Glas</option>
+                <option value="garnish">Garnish</option>
+                <option value="flair">Flair</option>
+                <option value="andet">Andet</option>
+                <option value="vodka">Vodka</option>
+                <option value="gin">Gin</option>
+                <option value="rom">Rom</option>
+                <option value="whisky">Whisky</option>
+                <option value="whiskey">Whiskey</option>
+                <option value="tequila">Tequila</option>
+                <option value="mezcal">Mezcal</option>
+                <option value="cognac">Cognac</option>
+                <option value="brandy">Brandy</option>
+              </select>
+            </label>
+            <label class="quiz-control">
+              <span>Sværhedsgrad</span>
+              <select id="quizDifficulty">
+                <option value="mix">Blandet</option>
+                <option value="let">Let</option>
+                <option value="mellem">Mellem</option>
+                <option value="svær">Svær</option>
+              </select>
+            </label>
+          </div>
           <button id="startBtn" class="btn">Start quiz</button>
         </div>
 

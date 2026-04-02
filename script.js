@@ -7,6 +7,8 @@ const quizStart = document.getElementById("quizStart");
 const quizPanel = document.getElementById("quizPanel");
 const resultPanel = document.getElementById("resultPanel");
 const startBtn = document.getElementById("startBtn");
+const quizCategory = document.getElementById("quizCategory");
+const quizDifficulty = document.getElementById("quizDifficulty");
 const questionText = document.getElementById("questionText");
 const answerList = document.getElementById("answerList");
 const nextBtn = document.getElementById("nextBtn");
@@ -25,6 +27,7 @@ let answered = false;
 let cards = [];
 let quizQuestions = [];
 let parsedData = null;
+let quizSettings = { topic: "alle", difficulty: "mix" };
 
 function bestScore() {
   return Number(localStorage.getItem("bartender-best-score") || 0);
@@ -53,6 +56,13 @@ function cardMatches(card, query) {
 function buildSuggestionMatches(query) {
   if (!query || !parsedData) return [];
   return window.KompendiumApp.buildSearchSuggestions(parsedData, query, 14);
+}
+
+function readQuizSettings() {
+  return {
+    topic: quizCategory ? quizCategory.value : "alle",
+    difficulty: quizDifficulty ? quizDifficulty.value : "mix"
+  };
 }
 
 function renderChips() {
@@ -116,14 +126,27 @@ function renderCards() {
     return typeOk && queryOk;
   });
 
+  // Calm default view: show only top-level categories until the user searches
+  // or explicitly drills into a chip.
+  const defaultView = query.length === 0 && activeType === "alle";
+  const visibleCards = defaultView
+    ? filtered.filter((card) => !card.parent).slice(0, 10)
+    : filtered;
+
   cardGrid.innerHTML = "";
 
-  if (!filtered.length) {
+  if (!visibleCards.length) {
     cardGrid.innerHTML = "<p>Ingen resultater. Prøv et andet filter.</p>";
     return;
   }
 
-  filtered.forEach((card, idx) => {
+  if (defaultView) {
+    categoryMeta.textContent = `Viser ${visibleCards.length} hovedkategorier. Brug søgning for detaljer.`;
+  } else {
+    categoryMeta.textContent = `Viser ${visibleCards.length} resultater.`;
+  }
+
+  visibleCards.forEach((card, idx) => {
     const article = document.createElement("article");
     article.className = "card";
     article.style.animationDelay = `${idx * 40}ms`;
@@ -158,6 +181,25 @@ function updateQuizMeta() {
   scoreText.textContent = `Point: ${score}`;
   bestText.textContent = `Bedste: ${bestScore()}`;
   progressFill.style.width = `${(qIndex / quizQuestions.length) * 100}%`;
+}
+
+function refreshQuizQuestions() {
+  if (!parsedData) return;
+  quizSettings = readQuizSettings();
+  quizQuestions = window.KompendiumApp.generateDynamicQuiz(parsedData, {
+    count: 12,
+    topic: quizSettings.topic,
+    difficulty: quizSettings.difficulty
+  });
+  updateQuizMeta();
+
+  if (!quizQuestions.length) {
+    startBtn.disabled = true;
+    startBtn.textContent = "Quiz utilgængelig";
+  } else {
+    startBtn.disabled = false;
+    startBtn.textContent = "Start quiz";
+  }
 }
 
 function showQuestion() {
@@ -224,6 +266,8 @@ function startQuiz() {
 
 startBtn.addEventListener("click", startQuiz);
 restartBtn.addEventListener("click", startQuiz);
+if (quizCategory) quizCategory.addEventListener("change", refreshQuizQuestions);
+if (quizDifficulty) quizDifficulty.addEventListener("change", refreshQuizQuestions);
 
 nextBtn.addEventListener("click", () => {
   qIndex += 1;
@@ -241,18 +285,12 @@ searchInput.addEventListener("input", renderCards);
     const text = await window.KompendiumApp.fetchKompendium("./kompendium.txt");
     parsedData = window.KompendiumApp.parseKompendium(text);
     cards = window.KompendiumApp.buildKnowledgeCards(parsedData);
-    quizQuestions = window.KompendiumApp.generateDynamicQuiz(parsedData, 12);
 
     categoryMeta.textContent = `Automatisk fundet: ${cards.length} kategorikort på tværs af ${parsedData.sections.length} hovedsektioner.`;
 
     renderChips();
     renderCards();
-    updateQuizMeta();
-
-    if (!quizQuestions.length) {
-      startBtn.disabled = true;
-      startBtn.textContent = "Quiz utilgængelig";
-    }
+    refreshQuizQuestions();
   } catch (err) {
     categoryMeta.textContent = `Fejl ved indlæsning: ${err.message}`;
     cardGrid.innerHTML = "<p>Kunne ikke indlæse kompendiet. Kontroller at du kører via lokal server.</p>";
