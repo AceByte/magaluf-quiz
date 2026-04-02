@@ -37,6 +37,10 @@
     if (!/^[A-Z][A-Za-z0-9\-\/ '&]+$/.test(line)) return false;
     const words = line.split(/\s+/).length;
     if (words > 8) return false;
+
+    // Cocktail category headings often appear without blank separators.
+    if (/Cocktails?/i.test(line) && words <= 4) return true;
+
     return (!prev || prev.trim() === "") || (!next || next.trim() === "");
   }
 
@@ -85,18 +89,21 @@
         continue;
       }
 
-      if (currentBlock) currentBlock.text += (currentBlock.text ? " " : "") + line;
+      if (currentBlock) currentBlock.text += (currentBlock.text ? "\n" : "") + line;
       else currentSection.intro.push(line);
     }
 
     sections.forEach(function (section) {
-      section.introText = section.intro.join(" ").replace(/\s+/g, " ").trim();
+      section.introText = section.intro.join("\n").replace(/\n{3,}/g, "\n\n").trim();
       delete section.intro;
       section.blocks = section.blocks.map(function (b) {
         return {
           title: b.title,
           slug: b.slug,
-          text: b.text.replace(/\s+/g, " ").trim(),
+          text: b.text
+            .replace(/[ \t]+\n/g, "\n")
+            .replace(/\n{3,}/g, "\n\n")
+            .trim(),
           parent: b.parent
         };
       });

@@ -106,14 +106,14 @@ function renderCards() {
 
 function updateQuizMeta() {
   if (!quizQuestions.length) {
-    progressText.textContent = "Sporgsmal 0/0";
+    progressText.textContent = "Spørgsmål 0/0";
     scoreText.textContent = "Point: 0";
     bestText.textContent = `Bedste: ${bestScore()}`;
     progressFill.style.width = "0%";
     return;
   }
 
-  progressText.textContent = `Sporgsmal ${Math.min(qIndex + 1, quizQuestions.length)}/${quizQuestions.length}`;
+  progressText.textContent = `Spørgsmål ${Math.min(qIndex + 1, quizQuestions.length)}/${quizQuestions.length}`;
   scoreText.textContent = `Point: ${score}`;
   bestText.textContent = `Bedste: ${bestScore()}`;
   progressFill.style.width = `${(qIndex / quizQuestions.length) * 100}%`;
@@ -169,7 +169,7 @@ function finishQuiz() {
   resultText.textContent = `Du fik ${score} / ${quizQuestions.length} (${pct}%).`;
   bestText.textContent = `Bedste: ${bestScore()}`;
   progressFill.style.width = "100%";
-  progressText.textContent = `Sporgsmal ${quizQuestions.length}/${quizQuestions.length}`;
+  progressText.textContent = `Spørgsmål ${quizQuestions.length}/${quizQuestions.length}`;
   switchPanel(resultPanel);
 }
 
@@ -202,7 +202,7 @@ searchInput.addEventListener("input", renderCards);
     cards = window.KompendiumApp.buildKnowledgeCards(parsedData);
     quizQuestions = window.KompendiumApp.generateDynamicQuiz(parsedData, 12);
 
-    categoryMeta.textContent = `Automatisk fundet: ${cards.length} kategorikort pa tvrs af ${parsedData.sections.length} hovedsektioner.`;
+    categoryMeta.textContent = `Automatisk fundet: ${cards.length} kategorikort på tværs af ${parsedData.sections.length} hovedsektioner.`;
 
     renderChips();
     renderCards();
