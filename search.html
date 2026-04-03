@@ -131,13 +131,9 @@
         }).join("") + "</div>";
       }
 
-      function formatBlockHtml(block, fullSection) {
-        if (!fullSection && block && block.snippet && !block.matchedRecipes) {
-          return formatParagraphs(block.snippet);
-        }
-
+      function formatBlockHtml(block) {
         const txt = block && block.text ? block.text : "";
-          if (/Glas:/i.test(txt) && /Ingredienser:/i.test(txt)) {
+        if (/Glas:/i.test(txt) && /Ingredienser:/i.test(txt)) {
           return formatRecipeBlock(txt);
         }
         return formatParagraphs(txt);
@@ -174,8 +170,8 @@
         contentEl.innerHTML = result
           .map(function (section) {
             const blockHtml = section.blocks
-                .map(function (b) {
-                  return `<section class=\"section-block\" id=\"${escapeHtml(b.slug)}\"><h3>${escapeHtml(b.title)}</h3>${formatBlockHtml(b, section.fullSection)}</section>`;
+              .map(function (b) {
+                return `<section class=\"section-block\" id=\"${escapeHtml(b.slug)}\"><h3>${escapeHtml(b.title)}</h3>${formatBlockHtml(b)}</section>`;
               })
               .join("");
 

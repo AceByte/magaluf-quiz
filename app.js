@@ -191,62 +191,6 @@
     return rx.test(hay);
   }
 
-  function textSnippet(text, query, fallbackLength) {
-    const source = String(text || "").replace(/\s+/g, " ").trim();
-    if (!source) return "";
-
-    const q = String(query || "").trim();
-    if (!q) return source.slice(0, fallbackLength || 180);
-
-    const lowerSource = source.toLowerCase();
-    const lowerQuery = q.toLowerCase();
-    const idx = lowerSource.indexOf(lowerQuery);
-
-    if (idx >= 0) {
-      const start = Math.max(0, idx - 80);
-      const end = Math.min(source.length, idx + lowerQuery.length + 120);
-      return (start > 0 ? "... " : "") + source.slice(start, end) + (end < source.length ? " ..." : "");
-    }
-
-    return source.slice(0, fallbackLength || 180) + (source.length > (fallbackLength || 180) ? " ..." : "");
-  }
-
-  function countQueryOccurrences(text, query) {
-    const q = String(query || "").trim().toLowerCase();
-    if (!q) return 0;
-
-    const hay = String(text || "").toLowerCase();
-    if (q.indexOf(" ") >= 0) {
-      return hay.split(q).length - 1;
-    }
-
-    const rx = new RegExp("(^|[^\\p{L}\\p{N}])" + escapeRegExp(q) + "(?=[^\\p{L}\\p{N}]|$)", "gu");
-    const matches = hay.match(rx);
-    return matches ? matches.length : 0;
-  }
-
-  function scoreQueryMatch(text, query) {
-    const q = String(query || "").trim().toLowerCase();
-    if (!q) return 0;
-
-    const hay = String(text || "").toLowerCase();
-    if (!textMatchesQuery(hay, q)) return 0;
-
-    let score = 0;
-    if (hay === q) score += 120;
-    if (hay.startsWith(q)) score += 70;
-    if (q.indexOf(" ") >= 0) {
-      if (hay.indexOf(q) >= 0) score += 45;
-    } else if (new RegExp("(^|[^\\p{L}\\p{N}])" + escapeRegExp(q) + "([^\\p{L}\\p{N}]|$)", "u").test(hay)) {
-      score += 50;
-    } else {
-      score += 25;
-    }
-
-    score += Math.min(5, countQueryOccurrences(hay, q)) * 10;
-    return score;
-  }
-
   function extractCocktailEntries(blockText) {
     const normalized = String(blockText || "")
       .replace(/\n+/g, " ")
@@ -372,11 +316,8 @@
     parsed.sections.forEach(function (section) {
       const sectionText = [section.title, section.introText].join(" ");
       const sectionHit = textMatchesQuery(sectionText, query);
-      const titleScore = scoreQueryMatch(section.title, query);
-      const introScore = scoreQueryMatch(section.introText, query);
 
       const blockHits = [];
-      const totalBlocks = section.blocks.length;
 
       section.blocks.forEach(function (block) {
         if (isCocktailRecipeBlock(block)) {
@@ -386,17 +327,12 @@
           });
 
           if (matchedEntries.length) {
-            const entryScores = matchedEntries.map(function (entry) {
-              return scoreQueryMatch(entry.name + " " + entry.body, query);
-            });
             blockHits.push({
               title: block.title,
               slug: block.slug,
               parent: block.parent,
               matchedRecipes: matchedEntries,
-              text: matchedEntries.map(function (e) { return e.rawText; }).join("\n\n"),
-              snippet: textSnippet(matchedEntries.map(function (e) { return e.rawText; }).join("\n\n"), query, 220),
-              score: Math.max.apply(Math, entryScores)
+              text: matchedEntries.map(function (e) { return e.rawText; }).join("\n\n")
             });
           }
           return;
@@ -404,38 +340,18 @@
 
         const blockText = [block.title, block.text || ""].join(" ");
         if (textMatchesQuery(blockText, query)) {
-          blockHits.push({
-            title: block.title,
-            slug: block.slug,
-            parent: block.parent,
-            text: block.text,
-            snippet: textSnippet(blockText, query, 220),
-            score: scoreQueryMatch(blockText, query)
-          });
+          blockHits.push(block);
         }
       });
 
       if (sectionHit || blockHits.length) {
-        blockHits.sort(function (a, b) { return (b.score || 0) - (a.score || 0); });
-
-        const allBlocksMatched = totalBlocks > 0 && blockHits.length > 0 && blockHits.length === totalBlocks;
-        const denseMatch = totalBlocks > 0 && blockHits.length / totalBlocks >= 0.75;
-        const fullSection = titleScore >= 70 || allBlocksMatched || (introScore >= 70 && denseMatch);
-        const visibleBlocks = fullSection ? blockHits : blockHits.slice(0, 3);
-
         result.push({
           title: section.title,
           slug: section.slug,
-          introText: fullSection ? section.introText : (sectionHit ? textSnippet(section.introText, query, 220) : ""),
-          blocks: visibleBlocks,
-          fullSection: fullSection,
-          score: Math.max(titleScore, introScore, blockHits[0] ? blockHits[0].score || 0 : 0)
+          introText: sectionHit ? section.introText : "",
+          blocks: blockHits
         });
       }
-    });
-
-    result.sort(function (a, b) {
-      return (b.score || 0) - (a.score || 0);
     });
 
     return result;
@@ -446,12 +362,11 @@
     const items = [];
 
     grouped.forEach(function (section) {
-      if (section.fullSection && section.introText) {
+      if (section.introText) {
         items.push({
           title: section.title,
           summary: firstSentence(section.introText),
-          link: "section.html?slug=" + encodeURIComponent(section.slug),
-          score: section.score || 0
+          link: "section.html?slug=" + encodeURIComponent(section.slug)
         });
       }
 
@@ -461,8 +376,7 @@
             items.push({
               title: recipe.name + " (" + block.title + ")",
               summary: firstSentence(recipe.body),
-              link: "section.html?slug=" + encodeURIComponent(section.slug) + "#" + encodeURIComponent(block.slug),
-              score: block.score || 0
+              link: "section.html?slug=" + encodeURIComponent(section.slug) + "#" + encodeURIComponent(block.slug)
             });
           });
           return;
@@ -471,8 +385,7 @@
         items.push({
           title: block.title + (block.parent ? " (" + block.parent + ")" : ""),
           summary: firstSentence(block.text),
-          link: "section.html?slug=" + encodeURIComponent(section.slug) + "#" + encodeURIComponent(block.slug),
-          score: block.score || 0
+          link: "section.html?slug=" + encodeURIComponent(section.slug) + "#" + encodeURIComponent(block.slug)
         });
       });
     });
@@ -483,10 +396,6 @@
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
-    });
-
-    deduped.sort(function (a, b) {
-      return (b.score || 0) - (a.score || 0);
     });
 
     if (typeof maxItems === "number" && maxItems > 0) {
