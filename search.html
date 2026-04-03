@@ -132,6 +132,10 @@
       }
 
       function formatBlockHtml(block) {
+        if (block && block.snippet && !block.matchedRecipes) {
+          return formatParagraphs(block.snippet);
+        }
+
         const txt = block && block.text ? block.text : "";
         if (/Glas:/i.test(txt) && /Ingredienser:/i.test(txt)) {
           return formatRecipeBlock(txt);

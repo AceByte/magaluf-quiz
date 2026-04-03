@@ -191,6 +191,26 @@
     return rx.test(hay);
   }
 
+  function textSnippet(text, query, fallbackLength) {
+    const source = String(text || "").replace(/\s+/g, " ").trim();
+    if (!source) return "";
+
+    const q = String(query || "").trim();
+    if (!q) return source.slice(0, fallbackLength || 180);
+
+    const lowerSource = source.toLowerCase();
+    const lowerQuery = q.toLowerCase();
+    const idx = lowerSource.indexOf(lowerQuery);
+
+    if (idx >= 0) {
+      const start = Math.max(0, idx - 80);
+      const end = Math.min(source.length, idx + lowerQuery.length + 120);
+      return (start > 0 ? "... " : "") + source.slice(start, end) + (end < source.length ? " ..." : "");
+    }
+
+    return source.slice(0, fallbackLength || 180) + (source.length > (fallbackLength || 180) ? " ..." : "");
+  }
+
   function extractCocktailEntries(blockText) {
     const normalized = String(blockText || "")
       .replace(/\n+/g, " ")
@@ -332,7 +352,8 @@
               slug: block.slug,
               parent: block.parent,
               matchedRecipes: matchedEntries,
-              text: matchedEntries.map(function (e) { return e.rawText; }).join("\n\n")
+              text: matchedEntries.map(function (e) { return e.rawText; }).join("\n\n"),
+              snippet: textSnippet(matchedEntries.map(function (e) { return e.rawText; }).join("\n\n"), query, 220)
             });
           }
           return;
@@ -340,7 +361,13 @@
 
         const blockText = [block.title, block.text || ""].join(" ");
         if (textMatchesQuery(blockText, query)) {
-          blockHits.push(block);
+          blockHits.push({
+            title: block.title,
+            slug: block.slug,
+            parent: block.parent,
+            text: block.text,
+            snippet: textSnippet(blockText, query, 220)
+          });
         }
       });
 
@@ -348,7 +375,7 @@
         result.push({
           title: section.title,
           slug: section.slug,
-          introText: sectionHit ? section.introText : "",
+          introText: sectionHit ? textSnippet(section.introText, query, 220) : "",
           blocks: blockHits
         });
       }
