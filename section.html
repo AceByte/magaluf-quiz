@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kompendium Sektion</title>
-  <script src="auth.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Work+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -30,8 +29,6 @@
   <script src="app.js"></script>
   <script>
     (async function () {
-      await window.SiteAuth.ensureUnlocked();
-
       const titleEl = document.getElementById("sectionTitle");
       const introEl = document.getElementById("sectionIntro");
       const tocEl = document.getElementById("tocList");

@@ -281,8 +281,6 @@ nextBtn.addEventListener("click", () => {
 searchInput.addEventListener("input", renderCards);
 
 (async function init() {
-  await window.SiteAuth.ensureUnlocked();
-
   try {
     const text = await window.KompendiumApp.fetchKompendium("./kompendium.txt");
     parsedData = window.KompendiumApp.parseKompendium(text);
