@@ -68,10 +68,6 @@
           .map(function (c) { return c.trim(); })
           .filter(Boolean);
 
-        if (chunks.length <= 1) {
-          return formatParagraphs(text);
-        }
-
         function parseRecipeFields(body) {
           const labels = ["Glas", "Is", "Metode", "Garnish", "Ingredienser"];
           const re = /(Glas|Is|Metode|Garnish|Ingredienser):/g;
