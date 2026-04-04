@@ -170,6 +170,17 @@
     return options;
   }
 
+  function cleanQuizOptionLabel(value) {
+    return String(value || "")
+      .trim()
+      .replace(/\s+/g, " ")
+      .replace(/[.,;:!?]+$/g, "");
+  }
+
+  function normalizeQuizOptionKey(value) {
+    return cleanQuizOptionLabel(value).toLowerCase();
+  }
+
   function escapeRegExp(value) {
     return String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   }
@@ -440,10 +451,23 @@
 
     function addQuestion(question) {
       if (!question || !question.q || !question.options || question.options.length < 2) return;
-      const normalizedOptions = Array.from(new Set(question.options)).filter(Boolean);
+      const optionMap = new Map();
+      const rawOptions = question.options.concat([question.answerValue]);
+
+      rawOptions.forEach(function (option) {
+        const key = normalizeQuizOptionKey(option);
+        if (!key || optionMap.has(key)) return;
+        optionMap.set(key, cleanQuizOptionLabel(option));
+      });
+
+      const normalizedOptions = Array.from(optionMap.values()).filter(Boolean);
       if (normalizedOptions.length < 2) return;
-      const answerIndex = normalizedOptions.indexOf(question.answerValue);
+
+      const answerKey = normalizeQuizOptionKey(question.answerValue);
+      const optionKeys = Array.from(optionMap.keys());
+      const answerIndex = optionKeys.indexOf(answerKey);
       if (answerIndex < 0) return;
+
       questionBank.push({
         q: question.q,
         options: normalizedOptions,
